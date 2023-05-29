@@ -24,15 +24,17 @@ func (mm *ManufacturerModel) QueryManufacturerByID(id uint) *ManufacturerModel {
 }
 
 type FirmwareModel struct {
-	ID           uint `gorm:"primaryKey"`
-	Manufacturer uint
-	Model        uint
-	Version      string
-	Search       string
-	Status       uint
-	FileExtra    datatypes.JSON
-	CreatedAt    time.Time
-	UpdatedAt    time.Time
+	ID                      uint `gorm:"primaryKey"`
+	Manufacturer            uint
+	ManufacturerDisplayName string `gorm:"-"`
+	Model                   uint
+	ModelDisplayName        string `gorm:"-"`
+	Version                 string
+	Search                  string
+	Status                  uint
+	FileExtra               datatypes.JSON
+	CreatedAt               time.Time
+	UpdatedAt               time.Time
 }
 
 func (FirmwareModel) TableName() string {
@@ -43,6 +45,15 @@ func (fm FirmwareModel) QueryFirmwaresByModelID(id uint) []*FirmwareModel {
 	fms := []*FirmwareModel{}
 	DB.Where("model = ?", id).Find(&fms)
 	return fms
+}
+
+func (fm *FirmwareModel) FillRelated() {
+	mm := ModelModel{}
+	mm.QueryModelByID(fm.Model)
+	mam := ManufacturerModel{}
+	mam.QueryManufacturerByID(fm.Manufacturer)
+	fm.ModelDisplayName = mm.DisplayName
+	fm.ManufacturerDisplayName = mam.DisplayName
 }
 
 type ModelModel struct {

@@ -66,5 +66,8 @@ func QueryByModelID(c *gin.Context) {
 	}
 	fm := models.FirmwareModel{}
 	fms := fm.QueryFirmwaresByModelID(_id)
+	for i := range fms {
+		fms[i].FillRelated()
+	}
 	JSONResponse(c, 200, fms)
 }
