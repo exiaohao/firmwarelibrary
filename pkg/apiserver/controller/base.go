@@ -33,3 +33,10 @@ func JSONResponse(c *gin.Context, code int, data interface{}) {
 		Data:    data,
 	})
 }
+
+func NoRouteResult(c *gin.Context) {
+	c.JSON(404, gin.H{
+		"path":    c.Request.URL.Path,
+		"message": "Not Found",
+	})
+}
